@@ -1,0 +1,31 @@
+services:
+    app:
+        container_name: calculation-service-app
+        build: Docker/php-fpm
+        ports:
+            - 9000:9000
+        volumes:
+            - ./app:/var/www
+            - ./logs:/var/www/logs
+        working_dir: /var/www
+        networks:
+            - calculation-network
+
+    nginx:
+        container_name: calculation-service-nginx
+        restart: always
+        build: Docker/nginx
+        ports:
+            - 80:80
+        depends_on:
+            - app
+        networks:
+            - calculation-network
+        working_dir: /var/www
+        volumes:
+            - ./logs/nginx:/var/log/nginx:cached
+            - ./app:/var/www
+
+
+networks:
+    calculation-network:
